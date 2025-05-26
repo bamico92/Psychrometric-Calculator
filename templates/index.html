@@ -1,0 +1,409 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Air Moisture Content Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .unit {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: 5px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .results {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .results h2 {
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        .result-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .result-value {
+            font-size: 1.4em;
+            font-weight: 300;
+            font-family: 'Courier New', monospace;
+        }
+
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .formula-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .formula-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .formula-info p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .calculation-steps {
+            margin-top: 30px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 4px solid #667eea;
+        }
+
+        .calculation-steps h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            text-align: center;
+        }
+
+        .step {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 3px solid #667eea;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .step-formula {
+            background: #e8f4f8;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .step-calculation {
+            background: #fff3cd;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .step-result {
+            background: #d4edda;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: #155724;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .final-result {
+            background: #667eea;
+            color: white;
+            font-size: 1.1em;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .step-formula, .step-calculation, .step-result {
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌡️ Supply Air Moisture Content Calculator</h1>
+            <p>Calculate moisture content using psychrometric principles</p>
+        </div>
+        
+        <div class="content">
+            <div class="formula-info">
+                <h3>📐 Calculation Method</h3>
+                <p>This calculator uses the humidity ratio formula and linear interpolation to determine the moisture content of supply air based on outdoor conditions and apparatus dew point (ADP).</p>
+                <p><strong>Key Formula:</strong> w = 0.622 × P<sub>vapor</sub> / (P<sub>atm</sub> - P<sub>vapor</sub>)</p>
+            </div>
+
+            <form method="POST">
+                <div class="form-grid">
+                    <div>
+                        <div class="form-group">
+                            <label for="temp_out">Outside Dry Bulb Temperature <span class="unit">(°C)</span></label>
+                            <input type="number" id="temp_out" name="temp_out" step="0.1" required 
+                                   value="{{ temp_out if temp_out else '' }}" 
+                                   placeholder="e.g., 35.0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="rh_percent">Outside Relative Humidity <span class="unit">(%)</span></label>
+                            <input type="number" id="rh_percent" name="rh_percent" step="0.1" min="0" max="100" required 
+                                   value="{{ rh_percent if rh_percent else '' }}" 
+                                   placeholder="e.g., 60.0">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="form-group">
+                            <label for="temp_adp">Apparatus Dew Point Temperature <span class="unit">(°C)</span></label>
+                            <input type="number" id="temp_adp" name="temp_adp" step="0.1" required 
+                                   value="{{ temp_adp if temp_adp else '' }}" 
+                                   placeholder="e.g., 12.0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="temp_supply">Supply Air Temperature <span class="unit">(°C)</span></label>
+                            <input type="number" id="temp_supply" name="temp_supply" step="0.1" required 
+                                   value="{{ temp_supply if temp_supply else '' }}" 
+                                   placeholder="e.g., 16.0">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">🧮 Calculate Moisture Content</button>
+            </form>
+
+            {% if error %}
+                <div class="error">
+                    ⚠️ {{ error }}
+                </div>
+            {% endif %}
+
+            {% if w_out is not none %}
+                <div class="results">
+                    <h2>📊 Calculation Results</h2>
+                    
+                    <div class="result-item">
+                        <div class="result-label">Moisture Content of Outside Air:</div>
+                        <div class="result-value">{{ w_out }} kg/kg</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="result-label">Moisture Content at ADP:</div>
+                        <div class="result-value">{{ w_adp }} kg/kg</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="result-label">Final Supply Air Moisture Content:</div>
+                        <div class="result-value">{{ w_supply }} kg/kg</div>
+                    </div>
+                </div>
+                
+                {% if steps %}
+                <div class="calculation-steps">
+                    <h3>🔍 Step-by-Step Calculation Breakdown</h3>
+                    
+                    <div class="step">
+                        <div class="step-title">Step 1: Calculate Saturation Pressure at Outside Temperature</div>
+                        <div class="step-formula">P<sub>sat,out</sub> = 0.61078 × exp(17.27 × T<sub>out</sub> / (T<sub>out</sub> + 237.3))</div>
+                        <div class="step-calculation">P<sub>sat,out</sub> = 0.61078 × exp(17.27 × {{ temp_out }} / ({{ temp_out }} + 237.3))</div>
+                        <div class="step-result">P<sub>sat,out</sub> = {{ "%.6f"|format(steps.P_sat_out) }} kPa</div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-title">Step 2: Calculate Vapor Pressure of Outside Air</div>
+                        <div class="step-formula">P<sub>vapor</sub> = RH × P<sub>sat,out</sub></div>
+                        <div class="step-calculation">P<sub>vapor</sub> = {{ "%.3f"|format(steps.RH_decimal) }} × {{ "%.6f"|format(steps.P_sat_out) }}</div>
+                        <div class="step-result">P<sub>vapor</sub> = {{ "%.6f"|format(steps.P_vapor) }} kPa</div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-title">Step 3: Calculate Humidity Ratio of Outside Air</div>
+                        <div class="step-formula">w<sub>out</sub> = 0.622 × P<sub>vapor</sub> / (P<sub>atm</sub> - P<sub>vapor</sub>)</div>
+                        <div class="step-calculation">w<sub>out</sub> = 0.622 × {{ "%.6f"|format(steps.P_vapor) }} / ({{ steps.P_atm }} - {{ "%.6f"|format(steps.P_vapor) }})</div>
+                        <div class="step-result">w<sub>out</sub> = {{ w_out }} kg/kg</div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-title">Step 4: Calculate Saturation Pressure at ADP</div>
+                        <div class="step-formula">P<sub>sat,adp</sub> = 0.61078 × exp(17.27 × T<sub>adp</sub> / (T<sub>adp</sub> + 237.3))</div>
+                        <div class="step-calculation">P<sub>sat,adp</sub> = 0.61078 × exp(17.27 × {{ temp_adp }} / ({{ temp_adp }} + 237.3))</div>
+                        <div class="step-result">P<sub>sat,adp</sub> = {{ "%.6f"|format(steps.P_sat_adp) }} kPa</div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-title">Step 5: Calculate Humidity Ratio at ADP (Saturated)</div>
+                        <div class="step-formula">w<sub>adp</sub> = 0.622 × P<sub>sat,adp</sub> / (P<sub>atm</sub> - P<sub>sat,adp</sub>)</div>
+                        <div class="step-calculation">w<sub>adp</sub> = 0.622 × {{ "%.6f"|format(steps.P_sat_adp) }} / ({{ steps.P_atm }} - {{ "%.6f"|format(steps.P_sat_adp) }})</div>
+                        <div class="step-result">w<sub>adp</sub> = {{ w_adp }} kg/kg</div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-title">Step 6: Linear Interpolation for Supply Air</div>
+                        <div class="step-formula">x = (T<sub>supply</sub> - T<sub>adp</sub>) / (T<sub>out</sub> - T<sub>adp</sub>)</div>
+                        <div class="step-calculation">x = ({{ temp_supply }} - {{ temp_adp }}) / ({{ temp_out }} - {{ temp_adp }})</div>
+                        <div class="step-result">x = {{ "%.6f"|format(steps.x_factor) }}</div>
+                        
+                        <div class="step-formula">w<sub>supply</sub> = w<sub>adp</sub> + x × (w<sub>out</sub> - w<sub>adp</sub>)</div>
+                        <div class="step-calculation">w<sub>supply</sub> = {{ w_adp }} + {{ "%.6f"|format(steps.x_factor) }} × ({{ w_out }} - {{ w_adp }})</div>
+                        <div class="step-result final-result">w<sub>supply</sub> = {{ w_supply }} kg/kg</div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
